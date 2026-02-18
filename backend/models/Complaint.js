@@ -56,6 +56,11 @@ const complaintSchema = mongoose.Schema(
         resolutionNote: String,
         resolutionImage: String, // Evidence of resolution
         resolutionDate: Date,
+
+        // Dispatch Details
+        vehicleNumber: String,
+        driverName: String,
+        dispatchTime: Date,
     },
     {
         timestamps: true,

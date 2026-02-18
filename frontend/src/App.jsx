@@ -13,6 +13,7 @@ import ToiletLocator from './pages/ToiletLocator';
 import RateToilet from './pages/RateToilet';
 import Feedback from './pages/Feedback';
 import ComplaintDetails from './pages/ComplaintDetails';
+import SmartBinMap from './pages/SmartBinMap';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/events" element={<Events />} />
                 <Route path="/toilet-locator" element={<ToiletLocator />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
+                <Route path="/smart-bins" element={<SmartBinMap />} />
               </Route>
 
               <Route element={<ProtectedRoute allowedRoles={['citizen']} />}>

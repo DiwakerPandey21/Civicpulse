@@ -20,12 +20,23 @@ const ChatComponent = ({ complaintId }) => {
         try {
             const config = { headers: { Authorization: `Bearer ${user.token}` } };
             const res = await axios.get(`http://localhost:5000/api/messages/${complaintId}`, config);
-            setMessages(res.data);
-            scrollToBottom();
+
+            // Only update if we have new data to avoid unnecessary renders/scrolls
+            setMessages(prev => {
+                if (JSON.stringify(prev) !== JSON.stringify(res.data)) {
+                    return res.data;
+                }
+                return prev;
+            });
         } catch (err) {
             console.error("Error fetching messages:", err);
         }
     };
+
+    // Scroll only when messages change
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

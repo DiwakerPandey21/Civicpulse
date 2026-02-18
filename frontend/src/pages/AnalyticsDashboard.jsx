@@ -99,6 +99,39 @@ const AnalyticsDashboard = () => {
                 <GovernmentStats />
             </div>
 
+            {/* 3. Official Capabilities - ONLY FOR OFFICIALS */}
+            <div className="mb-8 p-6 bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 rounded-2xl border border-slate-300 dark:border-slate-600 print:hidden">
+                <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center">
+                    <FaClipboardCheck className="mr-2 text-indigo-600" /> Official Actions
+                </h3>
+                <div className="flex gap-4 flex-wrap">
+                    <button
+                        onClick={() => window.print()}
+                        className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl font-bold transition-all shadow-lg active:scale-95"
+                    >
+                        <span>🖨️ Print Monthly Report</span>
+                    </button>
+
+                    <button
+                        onClick={() => {
+                            const headers = ["Category,Value"];
+                            const rows = categories.map(c => `${c.name},${c.value}`);
+                            const csvContent = "data:text/csv;charset=utf-8," + headers.concat(rows).join("\n");
+                            const encodedUri = encodeURI(csvContent);
+                            const link = document.createElement("a");
+                            link.setAttribute("href", encodedUri);
+                            link.setAttribute("download", "complaint_stats.csv");
+                            document.body.appendChild(link);
+                            link.click();
+                        }}
+                        className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl font-bold transition-all shadow-lg active:scale-95"
+                    >
+                        <span>📊 Export Data (CSV)</span>
+                    </button>
+                </div>
+                <p className="text-xs text-slate-500 mt-2">Generate official reports for department review.</p>
+            </div>
+
             {/* 3. Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 

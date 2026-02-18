@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AuthContext from '../context/AuthContext';
 import ChatComponent from '../components/ChatComponent';
-import { FaArrowLeft, FaMapMarkerAlt, FaClock, FaCheckCircle, FaExclamationTriangle, FaUserTie, FaCamera } from 'react-icons/fa';
+import { FaArrowLeft, FaMapMarkerAlt, FaClock, FaCheckCircle, FaExclamationTriangle, FaUserTie, FaCamera, FaTruck } from 'react-icons/fa';
 
 const ComplaintDetails = () => {
     const { id } = useParams();
@@ -203,6 +203,20 @@ const ComplaintDetails = () => {
                                         <p className="text-xs text-slate-500">{new Date(complaint.createdAt).toLocaleString()}</p>
                                     </div>
 
+                                    {/* Dispatch Info */}
+                                    {complaint.dispatchTime && (
+                                        <div className="relative">
+                                            <div className="absolute -left-[33px] bg-blue-500 rounded-full p-1 text-white shadow-lg">
+                                                <FaTruck size={14} />
+                                            </div>
+                                            <p className="font-bold text-slate-800 dark:text-white">Vehicle Dispatched</p>
+                                            <p className="text-sm text-slate-600 dark:text-slate-300">
+                                                {complaint.vehicleNumber} ({complaint.driverName})
+                                            </p>
+                                            <p className="text-xs text-slate-500">{new Date(complaint.dispatchTime).toLocaleString()}</p>
+                                        </div>
+                                    )}
+
                                     {/* Last Update */}
                                     <div className="relative">
                                         <div className={`absolute -left-[33px] rounded-full p-1 text-white shadow-lg ${complaint.status === 'Resolved' ? 'bg-green-500' : 'bg-blue-500'
@@ -218,6 +232,54 @@ const ComplaintDetails = () => {
                                 {(user.role === 'official' || user.role === 'admin') && complaint.status !== 'Resolved' && (
                                     <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
                                         <h4 className="font-bold text-slate-800 dark:text-white mb-3">Update Status</h4>
+
+                                        {/* DISPATCH VEHICLE SECTION */}
+                                        {complaint.status === 'Pending' && (
+                                            <div className="mb-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700 p-5 rounded-2xl border border-blue-100 dark:border-slate-600 shadow-sm">
+                                                <h4 className="font-bold text-blue-800 dark:text-blue-300 mb-3 flex items-center">
+                                                    <FaTruck className="mr-2 text-lg" /> Dispatch Vehicle
+                                                </h4>
+                                                <div className="space-y-3">
+                                                    <div className="relative">
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Vehicle Number (e.g., PB-08-TR-1234)"
+                                                            className="w-full pl-3 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all outline-none"
+                                                            id="vehicle-input"
+                                                        />
+                                                    </div>
+                                                    <div className="relative">
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Driver Name"
+                                                            className="w-full pl-3 pr-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all outline-none"
+                                                            id="driver-input"
+                                                        />
+                                                    </div>
+                                                    <button
+                                                        onClick={async () => {
+                                                            const vehicle = document.getElementById('vehicle-input').value;
+                                                            const driver = document.getElementById('driver-input').value;
+                                                            if (!vehicle || !driver) return alert("Enter Vehicle & Driver Details");
+
+                                                            try {
+                                                                await axios.put(`http://localhost:5000/api/complaints/${id}/dispatch`,
+                                                                    { vehicleNumber: vehicle, driverName: driver },
+                                                                    { headers: { Authorization: `Bearer ${user.token}` } }
+                                                                );
+                                                                alert("Vehicle Dispatched!");
+                                                                window.location.reload();
+                                                            } catch (err) {
+                                                                alert("Dispatch Failed");
+                                                            }
+                                                        }}
+                                                        className="w-full bg-blue-600 hover:bg-blue-700 active:scale-95 text-white py-2.5 rounded-xl font-bold shadow-lg shadow-blue-200 dark:shadow-none transition-all flex items-center justify-center"
+                                                    >
+                                                        <FaTruck className="mr-2" /> Dispatch Team
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
 
                                         <select
                                             className="w-full p-2 mb-3 rounded border border-slate-300 dark:border-slate-600 dark:bg-slate-700"
@@ -296,9 +358,19 @@ const ComplaintDetails = () => {
                                 )}
                             </div>
 
-                            {/* CHAT COMPONENT */}
-                            <ChatComponent complaintId={id} />
+
                         </div>
+                    </div>
+                </div>
+
+                {/* FULL WIDTH CHAT SECTION */}
+                <div className="border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-8">
+                    <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200 mb-6 flex items-center">
+                        <span className="bg-indigo-100 text-indigo-600 p-2 rounded-lg mr-3"><FaUserTie /></span>
+                        Official Discussion & Updates
+                    </h3>
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-1">
+                        <ChatComponent complaintId={id} />
                     </div>
                 </div>
             </div>

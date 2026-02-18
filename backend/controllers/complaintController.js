@@ -44,26 +44,41 @@ const getComplaints = async (req, res) => {
         } else if (req.user.role === 'official') {
             // Officials see complaints relevant to their department
             if (req.user.department && req.user.department !== 'None') {
-                // Mapping Logic: Category -> Department
-                // 'Traffic Violation' -> 'Traffic'
-                // 'Pothole' -> 'infrastructure'
-                // 'Water Leak' -> 'Water'
-                // 'Garbage' -> 'health' (assuming)
-                // 'Street Light' -> 'infrastructure'
-
-                // This mapping should be more robust, maybe a helper function.
-                // For simplicity, let's filter purely by categories that match their department.
-
                 let categories = [];
-                if (req.user.department === 'Traffic') categories = ['Traffic Violation'];
-                if (req.user.department === 'infrastructure') categories = ['Pothole', 'Street Light'];
-                if (req.user.department === 'Water') categories = ['Water Leak'];
-                if (req.user.department === 'health') categories = ['Garbage'];
 
-                complaints = await Complaint.find({ category: { $in: categories } }).sort({ createdAt: -1 });
+                // Department Mapping
+                switch (req.user.department) {
+                    case 'Health':
+                        categories = ['Dead animal(s)', 'Garbage dump', 'Dustbins not cleaned', 'Sweeping not done'];
+                        break;
+                    case 'Sanitation':
+                        categories = ['Garbage dump', 'Overflow of Sewerage or Storm Water', 'Yellow Spot (Public Urination Spot)', 'Garbage vehicle not arrived'];
+                        break;
+                    case 'Infrastructure':
+                        categories = ['Pothole', 'Street Light', 'No electricity in public toilet(s)', 'Water Leak']; // Water leak often falls here or separate
+                        break;
+                    case 'Traffic':
+                        categories = ['Traffic Violation'];
+                        break;
+                    case 'Water':
+                        categories = ['Water Leak', 'Overflow of Sewerage or Storm Water'];
+                        break;
+                    default:
+                        categories = [];
+                }
+
+                // If categories defined, filter by them
+                if (categories.length > 0) {
+                    complaints = await Complaint.find({ category: { $in: categories } }).sort({ createdAt: -1 });
+                } else {
+                    // Fallback: If dept exists but no mapping (e.g., 'General'), maybe show all or none?
+                    // Let's show none to force proper assignment, or all if it's 'General Admin'
+                    complaints = [];
+                }
 
             } else {
-                // If no department assigned, maybe they see nothing or all? Let's say nothing for now.
+                // If official has no department, they see nothing (or maybe they should see Unassigned?)
+                // For now, return empty to encourage meaningful assignment.
                 complaints = [];
             }
 
@@ -181,4 +196,30 @@ const getComplaintById = async (req, res) => {
     }
 };
 
-module.exports = { createComplaint, getComplaints, updateComplaintStatus, getComplaintById };
+// @desc    Dispatch Vehicle for Complaint
+// @route   PUT /api/complaints/:id/dispatch
+// @access  Private (Official/Admin)
+const dispatchComplaint = async (req, res) => {
+    try {
+        const { vehicleNumber, driverName } = req.body;
+        const complaint = await Complaint.findById(req.params.id);
+
+        if (complaint) {
+            complaint.vehicleNumber = vehicleNumber;
+            complaint.driverName = driverName;
+            complaint.dispatchTime = Date.now();
+            complaint.status = 'In Progress';
+
+            const updatedComplaint = await complaint.save();
+            res.json(updatedComplaint);
+        } else {
+            res.status(404).json({ message: 'Complaint not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const deleteComplaint = async (req, res) => { /* Dummy for consistency if missing */ };
+
+module.exports = { createComplaint, getComplaints, updateComplaintStatus, getComplaintById, dispatchComplaint };

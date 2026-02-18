@@ -25,6 +25,15 @@ app.use('/api/leaderboard', require('./routes/leaderboardRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
 app.use('/api/events', require('./routes/eventRoutes'));
 app.use('/api/messages', require('./routes/messageRoutes'));
+app.use('/api/alerts', require('./routes/alertRoutes'));
+app.use('/api/bins', require('./routes/binRoutes'));
+
+const { simulateBinUpdates } = require('./controllers/binController');
+
+// IoT Simulation Loop (Run every 10 seconds)
+setInterval(() => {
+    simulateBinUpdates(); // Updates bin fill levels & auto-creates complaints
+}, 10000);
 
 const PORT = process.env.PORT || 5000;
 

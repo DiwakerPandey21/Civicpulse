@@ -23,7 +23,7 @@ const userSchema = mongoose.Schema(
         },
         department: {
             type: String,
-            enum: ['Traffic', 'Water', 'health', 'infrastructure', 'None'],
+            enum: ['Traffic', 'Water', 'Health', 'Infrastructure', 'Sanitation', 'None'],
             default: 'None',
         },
         phone: {

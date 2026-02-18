@@ -78,3 +78,55 @@
         @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-xl;
     }
 }
+
+/* Print Styles for Reports */
+@media print {
+
+    nav,
+    button,
+    footer,
+    .no-print,
+    header {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+        color: black !important;
+    }
+
+    .min-h-screen {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        background: white !important;
+    }
+
+    /* Hide shadows and borders for clean print */
+    .shadow-lg,
+    .shadow-xl,
+    .shadow-md {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+    }
+
+    .text-white {
+        color: black !important;
+    }
+
+    /* Ensure charts are not cut off */
+    .recharts-wrapper {
+        break-inside: avoid;
+    }
+
+    /* Header for Print */
+    body::before {
+        content: "CivicPulse Official Report - Generated via Admin Dashboard";
+        display: block;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #FF9933;
+        padding-bottom: 10px;
+    }
+}

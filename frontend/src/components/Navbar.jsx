@@ -2,7 +2,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useContext, useState } from 'react';
 import AuthContext from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { FaBars, FaTimes, FaUserCircle, FaSignOutAlt, FaMoon, FaSun, FaHome, FaCalendarAlt, FaClipboardList, FaTrophy } from 'react-icons/fa';
+import { FaBars, FaTimes, FaUserCircle, FaSignOutAlt, FaMoon, FaSun, FaHome, FaCalendarAlt, FaClipboardList, FaTrophy, FaTrashAlt } from 'react-icons/fa';
 
 const Navbar = () => {
     const { user, logout } = useContext(AuthContext);
@@ -58,6 +58,9 @@ const Navbar = () => {
                                     </Link>
                                     <Link to="/events" className="text-slate-700 hover:text-saffron-600 dark:text-slate-200 font-medium transition flex items-center">
                                         <FaCalendarAlt className="mr-1 text-indiaGreen-500" /> Events
+                                    </Link>
+                                    <Link to="/smart-bins" className="text-slate-700 hover:text-blue-600 dark:text-slate-200 font-medium transition flex items-center">
+                                        <FaTrashAlt className="mr-1 text-blue-500" /> IoT Bins <span className="ml-1 text-[10px] bg-red-500 text-white px-1 rounded animate-pulse">LIVE</span>
                                     </Link>
                                     <div className="flex items-center space-x-2 text-slate-700 dark:text-slate-200">
                                         <FaUserCircle className="text-saffron-600 text-xl" />

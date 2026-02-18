@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createComplaint, getComplaints, updateComplaintStatus, getComplaintById } = require('../controllers/complaintController');
+const { createComplaint, getComplaints, updateComplaintStatus, getComplaintById, dispatchComplaint } = require('../controllers/complaintController');
 const { protect } = require('../middleware/authMiddleware');
 const roleCheck = require('../middleware/roleMiddleware');
 const multer = require('multer');
@@ -33,6 +33,9 @@ router.route('/')
 router.route('/:id')
     .get(protect, getComplaintById);
 
+
 router.route('/:id/status').patch(protect, roleCheck(['official', 'admin']), upload.single('resolutionImage'), updateComplaintStatus);
+
+router.route('/:id/dispatch').put(protect, roleCheck(['official', 'admin']), dispatchComplaint);
 
 module.exports = router;
