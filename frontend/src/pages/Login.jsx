@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import { FaUser, FaUserTie, FaUserShield, FaMobileAlt, FaEnvelope, FaLock, FaMapMarkerAlt, FaGlobe, FaSpinner, FaArrowRight, FaFingerprint } from 'react-icons/fa';
 import Captcha from '../components/Captcha';
@@ -24,9 +24,15 @@ const Login = () => {
 
     const { login, sendOtp, verifyOtp, user } = useContext(AuthContext);
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         if (user) navigate('/dashboard');
+
+        // Check for role passed from Landing Page
+        if (location.state && location.state.role) {
+            setRole(location.state.role);
+        }
 
         // Simulate "Know your location" security check
         if ("geolocation" in navigator) {
@@ -36,7 +42,7 @@ const Login = () => {
                 setLocationDetected(false); // Valid to allow login even without location, but show secure icon status
             });
         }
-    }, [user, navigate]);
+    }, [user, navigate, location]);
 
     const handleLogin = async (e) => {
         e.preventDefault();

@@ -14,15 +14,23 @@ import RateToilet from './pages/RateToilet';
 import Feedback from './pages/Feedback';
 import ComplaintDetails from './pages/ComplaintDetails';
 import SmartBinMap from './pages/SmartBinMap';
+import LandingPage from './pages/LandingPage';
+
+import Preloader from './components/Preloader';
+import { useState, useEffect } from 'react';
 
 function App() {
+  const [loading, setLoading] = useState(true);
+
   return (
     <AuthProvider>
       <ThemeProvider>
+        {loading && <Preloader onFinish={() => setLoading(false)} />}
         <Router>
           <div className="min-h-screen font-sans text-slate-900 bg-slate-50 dark:bg-slate-900 dark:text-white transition-colors duration-300">
-            <Navbar />
+            {!loading && <Navbar />}
             <Routes>
+              <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
 
