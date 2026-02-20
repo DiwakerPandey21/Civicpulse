@@ -35,7 +35,7 @@ const LandingPage = () => {
                         </div>
 
                         <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-                            Building a <span className="text-transparent bg-clip-text bg-gradient-to-r from-saffron-400 via-white to-indiaGreen-400">Cleaner, Smarter</span> India Together.
+                            Building a <span className="text-saffron-400">Cleaner, Smarter</span> <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-white to-green-500 font-extrabold">India</span> Together.
                         </h1>
                         <p className="text-lg text-indigo-100 max-w-lg leading-relaxed">
                             Join the movement. Report issues, track progress, and collaborate with your local administration to transform our cities.
