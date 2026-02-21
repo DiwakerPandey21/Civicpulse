@@ -27,6 +27,7 @@ app.use('/api/events', require('./routes/eventRoutes'));
 app.use('/api/messages', require('./routes/messageRoutes'));
 app.use('/api/alerts', require('./routes/alertRoutes'));
 app.use('/api/bins', require('./routes/binRoutes'));
+app.use('/api/chat', require('./routes/chatRoutes'));
 
 const { simulateBinUpdates } = require('./controllers/binController');
 

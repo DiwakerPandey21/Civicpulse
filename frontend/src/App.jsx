@@ -15,6 +15,7 @@ import Feedback from './pages/Feedback';
 import ComplaintDetails from './pages/ComplaintDetails';
 import SmartBinMap from './pages/SmartBinMap';
 import LandingPage from './pages/LandingPage';
+import AIChatbot from './components/landing/AIChatbot';
 
 import Preloader from './components/Preloader';
 import { useState, useEffect } from 'react';
@@ -53,6 +54,11 @@ function App() {
                 <Route path="/feedback" element={<Feedback />} />
               </Route>
             </Routes>
+
+            {/* Global Floating AI Chatbot */}
+            <div className="fixed bottom-6 right-6 z-50">
+              <AIChatbot />
+            </div>
           </div>
         </Router>
       </ThemeProvider>

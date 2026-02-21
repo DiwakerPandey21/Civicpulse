@@ -5,6 +5,8 @@ import HowItWorks from '../components/landing/HowItWorks';
 import SwachhataQuotes from '../components/landing/SwachhataQuotes';
 import ImpactCounters from '../components/landing/ImpactCounters';
 import TopContributors from '../components/landing/TopContributors';
+import ActivityTicker from '../components/landing/ActivityTicker';
+import { useEffect, useRef } from 'react';
 
 const LandingPage = () => {
     const navigate = useNavigate();
@@ -13,8 +15,37 @@ const LandingPage = () => {
         navigate('/login', { state: { role } });
     };
 
+    // Scroll Reveal Observer
+    const revealRefs = useRef([]);
+    revealRefs.current = [];
+
+    const addToRefs = el => {
+        if (el && !revealRefs.current.includes(el)) {
+            revealRefs.current.push(el);
+        }
+    };
+
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in-up');
+                    entry.target.classList.remove('opacity-0', 'translate-y-8');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        revealRefs.current.forEach(ref => {
+            observer.observe(ref);
+        });
+
+        return () => observer.disconnect();
+    }, []);
+
     return (
         <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+            <ActivityTicker />
             {/* Hero Section */}
             <div className="relative bg-indigo-900 text-white overflow-hidden">
                 {/* Background Image & Overlay */}
@@ -35,7 +66,7 @@ const LandingPage = () => {
                         </div>
 
                         <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-                            Building a <span className="text-saffron-400">Cleaner, Smarter</span> <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-white to-green-500 font-extrabold">India</span> Together.
+                            Building a <span className="text-saffron-400">Cleaner, Smarter</span> <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-white to-green-500 font-extrabold animate-pulse transition-all duration-300">India</span> Together.
                         </h1>
                         <p className="text-lg text-indigo-100 max-w-lg leading-relaxed">
                             Join the movement. Report issues, track progress, and collaborate with your local administration to transform our cities.
@@ -51,37 +82,7 @@ const LandingPage = () => {
                         </div>
                     </div>
 
-                    {/* Namaste Hook - AI Avatar Widget */}
-                    <div className="md:w-1/2 mt-12 md:mt-0 flex justify-center md:justify-end relative">
-                        <div className="relative w-80 h-80 md:w-96 md:h-96">
-                            {/* Decorative Circles */}
-                            <div className="absolute inset-0 bg-gradient-to-tr from-saffron-500 to-indiaGreen-500 rounded-full blur-3xl opacity-20 animate-pulse"></div>
 
-                            {/* Avatar Container */}
-                            <div className="relative z-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl transform rotate-3 hover:rotate-0 transition duration-500">
-                                <div className="flex items-center space-x-4 border-b border-white/10 pb-4 mb-4">
-                                    <div className="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center text-2xl shadow-inner">
-                                        🙏
-                                    </div>
-                                    <div>
-                                        <h3 className="font-bold text-lg">Namaste, Naagrik!</h3>
-                                        <p className="text-xs text-indigo-200">AI Assistant</p>
-                                    </div>
-                                </div>
-                                <div className="space-y-3">
-                                    <div className="bg-indigo-900/50 p-3 rounded-lg rounded-tl-none text-sm text-indigo-100 italic border-l-4 border-saffron-500">
-                                        "I am here to help you make your city cleaner. Are you ready to report a problem today?"
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <div className="h-2 w-16 bg-slate-500/30 rounded-full animate-pulse"></div>
-                                        <div className="h-2 w-10 bg-slate-500/30 rounded-full animate-pulse delay-100"></div>
-                                    </div>
-                                </div>
-
-                                <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-indiaGreen-500 rounded-full opacity-20 blur-xl"></div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -105,8 +106,9 @@ const LandingPage = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {/* Citizen Card */}
                         <div
+                            ref={addToRefs}
                             onClick={() => handleRoleSelect('citizen')}
-                            className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer border border-slate-100 dark:border-slate-700 group relative overflow-hidden"
+                            className="opacity-0 translate-y-8 bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer border border-slate-100 dark:border-slate-700 group relative overflow-hidden"
                         >
                             <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-orange-400 to-orange-600"></div>
                             <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-2xl flex items-center justify-center text-orange-600 dark:text-orange-400 mb-6 group-hover:scale-110 transition-transform">
@@ -123,8 +125,9 @@ const LandingPage = () => {
 
                         {/* Official Card */}
                         <div
+                            ref={addToRefs}
                             onClick={() => handleRoleSelect('official')}
-                            className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer border border-slate-100 dark:border-slate-700 group relative overflow-hidden"
+                            className="opacity-0 translate-y-8 bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer border border-slate-100 dark:border-slate-700 group relative overflow-hidden delay-100"
                         >
                             <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-blue-500 to-blue-700"></div>
                             <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-400 mb-6 group-hover:scale-110 transition-transform">
@@ -141,8 +144,9 @@ const LandingPage = () => {
 
                         {/* Admin Card */}
                         <div
+                            ref={addToRefs}
                             onClick={() => handleRoleSelect('admin')}
-                            className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer border border-slate-100 dark:border-slate-700 group relative overflow-hidden"
+                            className="opacity-0 translate-y-8 bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer border border-slate-100 dark:border-slate-700 group relative overflow-hidden delay-200"
                         >
                             <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-green-500 to-green-700"></div>
                             <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-2xl flex items-center justify-center text-green-600 dark:text-green-400 mb-6 group-hover:scale-110 transition-transform">
@@ -169,7 +173,7 @@ const LandingPage = () => {
             {/* Features Preview */}
             <div className="py-20 bg-white dark:bg-slate-800/50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+                    <div ref={addToRefs} className="opacity-0 translate-y-8 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
                         <div className="p-6">
                             <div className="w-16 h-16 bg-green-50 dark:bg-green-900/20 rounded-full mx-auto flex items-center justify-center text-green-600 mb-4">
                                 <FaLeaf size={24} />
